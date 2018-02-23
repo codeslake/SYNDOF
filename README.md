@@ -2,7 +2,7 @@
 # Defocus Image generation
 Tensorflow implementation of FlappyBird using Reinforcement Learning, DQN
 
-<img src="./assets/merged_image.pgn" width="288">
+<img src="./assets/merged_image.png" width="288">
 
 ## Prerequisites
 -   Tensorflow 1.0 or higher

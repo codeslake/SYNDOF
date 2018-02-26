@@ -1,6 +1,6 @@
 
 # Defocus Image generation
-Tensorflow implementation of FlappyBird using Reinforcement Learning, DQN
+Generating Image with shallow Depth of Field
 
 <img src="./assets/merged_image.png" width="288">
 
@@ -9,7 +9,6 @@ Tensorflow implementation of FlappyBird using Reinforcement Learning, DQN
 
 ## Getting Started
 ### Installation
--   Install tensorflow from https://www.tensorflow.org/install/
 -   Clone this repo:
 ```bash
 git clone https://github.com/codeslake/defocus_image_generation.git

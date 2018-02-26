@@ -62,18 +62,6 @@ def masked_gaussian_filter(d_image, mask, sigma, i):
 	blurred_ring_mask[np.where(blurred_ring_mask > 0.00001)] = 1 
 	blurred_ring_mask_3c = np.repeat(np.expand_dims(blurred_ring_mask, 3), 3, axis = 2)
 	final_blurred = masked_conv_image + blurred_ring
-	'''
-
-	final_blurred = blurred_image / blurred_mask_3c_epsilon
-
-	mask_3c = np.repeat(np.expand_dims(mask, 2), 3, axis = 2)
-	masked_conv_image = final_blurred * mask_3c
-	blurred_ring = (1 - mask_3c) * final_blurred
-	blurred_ring_mask = np.average(blurred_ring, axis = 2)
-	blurred_ring_mask[np.where(blurred_ring_mask > 0.)] = 1 
-	#blurred_ring_mask = blurred_mask.astype(int)
-	blurred_ring_mask_3c = np.repeat(np.expand_dims(blurred_ring_mask, 3), 3, axis = 2)
-	'''
 
 	scipy.misc.toimage(blurred_image, cmin=0., cmax=255.).save(save_path + '{}_image_decomposed_blurred.png'.format(i))
 	scipy.misc.toimage(blurred_mask, cmin=0., cmax=1.).save(save_path + '{}_disp_decomposed_binary_blurred.png'.format(i))

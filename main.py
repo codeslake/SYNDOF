@@ -59,7 +59,6 @@ def masked_gaussian_filter(d_image, mask, sigma, i):
 	#blurred_mask_stacked_3c_epsilon[np.where(blurred_mask_stacked_3c_epsilon == 0)] = 0.00001
 
 	masked_conv_image = blurred_image / blurred_mask_3c_epsilon
-	blurred_ring_mask_3c_binary = np.copy(blurred_ring_mask_3c)
 
 	final_blurred = masked_conv_image
 

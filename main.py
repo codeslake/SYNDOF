@@ -58,33 +58,18 @@ def masked_gaussian_filter(d_image, mask, sigma, i):
 	#blurred_mask_stacked_3c_epsilon = np.copy(blurred_mask_stacked_3c)
 	#blurred_mask_stacked_3c_epsilon[np.where(blurred_mask_stacked_3c_epsilon == 0)] = 0.00001
 
-	#mask_stacked_3c = np.repeat(np.expand_dims(mask_stacked, 2), 3, axis = 2)
-	#masked_conv_image_stacked = blurred_image_stacked / blurred_mask_stacked_3c_epsilon * mask_stacked_3c
-	#blurred_ring_stacked = (1 - mask_stacked_3c) * blurred_image_stacked
-	#final_blurred = masked_conv_image_stacked + blurred_ring_stacked
-
-	mask_3c = np.repeat(np.expand_dims(mask, 2), 3, axis = 2)
 	masked_conv_image = blurred_image / blurred_mask_3c_epsilon
-	blurred_ring_mask = (1 - mask) * blurred_mask
-	blurred_ring_mask_3c = np.repeat(np.expand_dims(blurred_ring_mask, 3), 3, axis = 2)
 	blurred_ring_mask_3c_binary = np.copy(blurred_ring_mask_3c)
-	blurred_ring_mask_3c_binary[np.where((blurred_ring_mask_3c_binary * 255).astype(int) > 0)] = 1 
-	blurred_ring_mask_3c_binary[np.where((blurred_ring_mask_3c_binary * 255).astype(int) == 0)] = 0
-	blurred_ring = blurred_ring_mask_3c_binary * masked_conv_image
 
-	final_blurred = masked_conv_image * mask_3c + blurred_ring
+	final_blurred = masked_conv_image
 
 	scipy.misc.toimage(d_image, cmin=0., cmax=255.).save(save_path + '{}_5_image.png'.format(i))
 	scipy.misc.toimage(mask, cmin=0., cmax=1.).save(save_path + '{}_6_mask.png'.format(i))
 	scipy.misc.toimage(blurred_image, cmin=0., cmax=255.).save(save_path + '{}_7_image_decomposed_blurred.png'.format(i))
 	scipy.misc.toimage(blurred_mask, cmin=0., cmax=1.).save(save_path + '{}_8_disp_decomposed_binary_blurred.png'.format(i))
 	scipy.misc.toimage(masked_conv_image, cmin=0., cmax=255.).save(save_path + '{}_9_masked_conv_image.png'.format(i))
-	scipy.misc.toimage(blurred_ring, cmin=0., cmax=255.).save(save_path + '{}_10_ring_blurred.png'.format(i))
-	scipy.misc.toimage(blurred_ring_mask, cmin=0., cmax=1.).save(save_path + '{}_11_ring_blurred_mask.png'.format(i))
-	scipy.misc.toimage(blurred_ring_mask_3c_binary, cmin=0., cmax=1.).save(save_path + '{}_11_1_ring_blurred_mask_binary.png'.format(i))
-	scipy.misc.toimage(final_blurred, cmin=0., cmax=255.).save(save_path + '{}_12_final_blurred.png'.format(i))
 
-	return masked_conv_image, blurred_ring, blurred_ring_mask_3c
+	return masked_conv_image
 
 def get_blurred_images(d_images, d_disp_binary_maps):
 	masked_conv_images = []
@@ -101,55 +86,57 @@ def get_blurred_images(d_images, d_disp_binary_maps):
 		'''
 
 		#image_stacked = masked_conv_image + d_images[i]
-		masked_conv_image, blurred_ring, blurred_ring_mask = masked_gaussian_filter(d_images[i], d_disp_binary_maps[i], sigma[i], i)
+		masked_conv_image = masked_gaussian_filter(d_images[i], d_disp_binary_maps[i], sigma[i], i)
 
 		masked_conv_images.append(masked_conv_image)
-		blurred_rings.append(blurred_ring)
-		blurred_ring_masks.append(blurred_ring_mask)
 
-	return masked_conv_images, blurred_rings, blurred_ring_masks
+	return masked_conv_images
 
-def get_merged_images(m_images, masks, b_rings, b_ring_masks):
+def get_merged_images(m_images, masks):
 
 	merged_image = np.zeros_like(m_images[0])
-	masks = np.repeat(np.expand_dims(np.array(masks), 3), 3, axis = 3)
-	
+
 	for i in np.arange(num_layers):
-
-		merged_image = merged_image * (1 - masks[i]) + m_images[i] * masks[i]
-		scipy.misc.toimage(merged_image, cmin=0., cmax=255.).save(save_path + 'test_{}_1_merged_image.png'.format(i))
-		scipy.misc.toimage(b_ring_masks[i], cmin=0., cmax=1.).save(save_path + 'test_{}_2_0_b_ring_mask.png'.format(i))
-
-		b_ring_mask_binary = np.copy(b_ring_masks[i])
-		b_ring_mask_binary[np.where((b_ring_mask_binary * 255).astype(int) > 0)] = 1 
-		b_ring_mask_binary[np.where((b_ring_mask_binary * 255).astype(int) == 0)] = 0
-		b_ring_masks[i] *= b_ring_mask_binary
-
-		if b_ring_masks[i].max() != 0:
-			background_ring = merged_image * b_ring_mask_binary * (1. - b_ring_masks[i]/b_ring_masks[i].max())
-			foreground_ring = b_rings[i] * b_ring_masks[i]/b_ring_masks[i].max()
+		if i == 0:
+			merged_image = m_images[i]
+			scipy.misc.toimage(merged_image, cmin=0., cmax=255.).save(save_path + 'test_{}_8_merged_image.png'.format(i))
+			continue;
+		if i + 1 < num_layers:
+			mask_stacked = masks[i] + masks[i + 1]
 		else:
-			background_ring = merged_image * b_ring_mask_binary * (1. - b_ring_masks[i])
-			foreground_ring = b_rings[i] * b_ring_masks[i]
+			mask_stacked = masks[i]
 
-		scipy.misc.toimage(b_ring_mask_binary, cmin=0., cmax=1.).save(save_path + 'test_{}_2_0_b_ring_mask_binary.png'.format(i))
-		scipy.misc.toimage(b_rings[i], cmin=0., cmax=255.).save(save_path + 'test_{}_2_1_b_rings.png'.format(i))
-		scipy.misc.toimage(background_ring, cmin=0., cmax=255.).save(save_path + 'test_{}_2_2_background_ring.png'.format(i))
-		scipy.misc.toimage(foreground_ring, cmin=0., cmax=255.).save(save_path + 'test_{}_2_3_foreground_ring.png'.format(i))
-		blended_ring = background_ring + foreground_ring
+		scipy.misc.toimage(mask_stacked, cmin=0., cmax=1.).save(save_path + 'test_{}_0_mask_stacked.png'.format(i))
 
-		#scipy.misc.toimage(factor, cmin=0., cmax=255.).save(save_path + 'test_{}_2_factor.png'.format(i))
-		#scipy.misc.toimage(background, cmin=0., cmax=255.).save(save_path + 'test_{}_3_background.png'.format(i))
-		#scipy.misc.toimage(foreground, cmin=0., cmax=255.).save(save_path + 'test_{}_4_foreground.png'.format(i))
-		scipy.misc.toimage(blended_ring, cmin=0., cmax=255.).save(save_path + 'test_{}_5_blended_ring.png'.format(i))
+		blurred_mask_stacked = gaussian_filter(mask_stacked.astype(float), (sigma[i], sigma[i]))
+		scipy.misc.toimage(blurred_mask_stacked, cmin=0., cmax=1.).save(save_path + 'test_{}_0_mask_stacked_blurred.png'.format(i))
 
-		merged_image = merged_image * (1 - b_ring_mask_binary) + blended_ring
-		#scipy.misc.toimage(b_ring_masks[i], cmin=0., cmax=1.).save(save_path + 'test_{}_6_b_ring_mask.png'.format(i))
-		#scipy.misc.toimage(1-b_ring_masks[i], cmin=0., cmax=1.).save(save_path + 'test_{}_7_b_ring_mask_flipped.png'.format(i))
+		blurred_mask = gaussian_filter(masks[i].astype(float), (sigma[i], sigma[i]))
+		blurred_mask_epsilon = np.copy(blurred_mask)
+		blurred_mask_epsilon[np.where(blurred_mask_epsilon == 0)] = 0.00001
+		blurred_mask = blurred_mask / blurred_mask_epsilon
+		blurred_mask[np.where((blurred_mask * 255).astype(int) == 0)] = 0
 
-		#merged_ring = (alpha * (merged_image * b_ring_masks[i])  + (1 - alpha) * b_rings[i]) 
+		blurred_mask_before = gaussian_filter(masks[i-1].astype(float), (sigma[i-1], sigma[i-1]))
+		blurred_mask_before_epsilon = np.copy(blurred_mask_before)
+		blurred_mask_before_epsilon[np.where(blurred_mask_before_epsilon == 0)] = 0.00001
+		blurred_mask_before = blurred_mask_before / blurred_mask_before_epsilon
+		blurred_mask_before[np.where((blurred_mask_before * 255).astype(int) == 0)] = 0
+
+		scipy.misc.toimage(blurred_mask_before, cmin=0., cmax=1.).save(save_path + 'test_{}_0_mask_blurred_before.png'.format(i))
+		scipy.misc.toimage(blurred_mask, cmin=0., cmax=1.).save(save_path + 'test_{}_0_mask_conv_blurred.png'.format(i))
+
+		blurred_mask = blurred_mask * blurred_mask_before
+		blurred_mask_3c = np.repeat(np.expand_dims(blurred_mask, 2), 3, axis = 2)
+
+		scipy.misc.toimage(blurred_mask, cmin=0., cmax=1.).save(save_path + 'test_{}_1_mask_blurred.png'.format(i))
+		blurred_mask_origin = gaussian_filter(masks[i].astype(float), (sigma[i], sigma[i]))
+		scipy.misc.toimage(masks[i], cmin=0., cmax=1.).save(save_path + 'test_{}_1_mask_origin.png'.format(i))
+		scipy.misc.toimage(blurred_mask_origin, cmin=0., cmax=1.).save(save_path + 'test_{}_1_mask_blurred_origin.png'.format(i))
+
+		merged_image = merged_image * (1 - blurred_mask_3c) + m_images[i] * blurred_mask_3c
+
 		scipy.misc.toimage(merged_image, cmin=0., cmax=255.).save(save_path + 'test_{}_8_merged_image.png'.format(i))
-		#scipy.misc.toimage(merged_ring, cmin=0., cmax=255.).save(save_path + 'merged_ring_{}.png'.format(i))
 
 	return merged_image
 
@@ -164,8 +151,8 @@ def main():
 	scipy.misc.toimage(disp_map_norm, cmin=0., cmax=255.).save(save_path + '00_disp_norm.png')
 
 	decomposed_images, masks = get_decomposed_images(image, disp_map_norm, num_layers)
-	masked_conv_images, blurred_rings, blurred_ring_masks = get_blurred_images(decomposed_images, masks)
-	merged_image = get_merged_images(masked_conv_images, masks, blurred_rings, blurred_ring_masks)
+	masked_conv_images = get_blurred_images(decomposed_images, masks)
+	merged_image = get_merged_images(masked_conv_images, masks)
 	scipy.misc.toimage(merged_image, cmin=0., cmax=255.).save(save_path + '00_merged_image.png')
 
 if __name__ == '__main__':

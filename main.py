@@ -12,9 +12,9 @@ image_path = '/Mango/Common/Dataset/Stereo/JunyongLee/data/image'
 disp_map_path = '/Mango/Common/Dataset/Stereo/JunyongLee/data/disparity'
 
 save_path_image_dof = '/Mango/Common/Dataset/Stereo/JunyongLee/training/image_dof'
-save_path_image_dof_cls = '/data1/stereo/image'
+save_path_image_dof_local = '/data1/stereo/image'
 save_path_defocus_map = '/Mango/Common/Dataset/Stereo/JunyongLee/training/defocus_map'
-save_path_defocus_map_cls = '/data1/stereo/defocus_map'
+save_path_defocus_map_local = '/data1/stereo/defocus_map'
 save_path_image_original = '/Mango/Common/Dataset/Stereo/JunyongLee/training/image_original'
 save_path_disp_original = '/Mango/Common/Dataset/Stereo/JunyongLee/training/disparity_original'
 
@@ -166,14 +166,22 @@ def get_defocus_map(masks, sigma):
     return merged_defocus_map
 
 def main():
+    tl.files.exists_or_mkdir(save_path_image_dof)
+    tl.files.exists_or_mkdir(save_path_image_dof_local)
+    tl.files.exists_or_mkdir(save_path_defocus_map)
+    tl.files.exists_or_mkdir(save_path_defocus_map_local)
+    tl.files.exists_or_mkdir(save_path_image_original)
+    tl.files.exists_or_mkdir(save_path_disp_original)
+
     image_path_list = get_image_path_in_dir(image_path)
     image_path_list.sort()
     disp_path_list = get_image_path_in_dir(disp_map_path)
     disp_path_list.sort()
 
     for i in np.arange(len(image_path_list)):
-        if i == 10000:
+        if i == 20000:
             return
+
         image = get_image(image_path_list[i])
         sigma = np.array([11., 7., 3., 0.])
         rand = np.round(np.random.uniform(-2, 2, 4), 7)
@@ -192,7 +200,7 @@ def main():
         print 'image_path: ', image_path_list[i]
         print 'disparity_path: ', disp_path_list[i]
         scipy.misc.toimage(image, cmin=0., cmax=255.).save(save_path_image_original + '/{}.png'.format(i))
-        scipy.misc.toimage(disp_map_norm, cmin=0., cmax=255.).save(save_path_disp_original + '/{}.png'.format(i))
+        scipy.misc.toimage(255 - disp_map_norm, cmin=0., cmax=255.).save(save_path_disp_original + '/{}.png'.format(i))
         scipy.misc.toimage(merged_image, cmin=0., cmax=255.).save(save_path_image_dof + '/{}.png'.format(i))
         scipy.misc.toimage(defocus_map, cmin=0., cmax=1.).save(save_path_defocus_map + '/{}.png'.format(i))
         scipy.misc.toimage(merged_image, cmin=0., cmax=255.).save(save_path_image_dof_cls + '/{}.png'.format(i))

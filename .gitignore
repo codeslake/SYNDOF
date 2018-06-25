@@ -3,8 +3,6 @@ data/*
 utils/*
 backup/*
 
-
-
 ### Vim ###
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
@@ -12,3 +10,6 @@ backup/*
 Session.vim
 .netrwhist
 *~
+
+### pycharm ###
+.idea

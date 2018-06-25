@@ -1,20 +1,20 @@
-function generate_blur_by_depth(is_gpu, gpunum)
+function generate_blur_by_depth(max_coc, is_random_gen, is_gpu, gpunum)
     if is_gpu
         disp(['gpu: ', num2str(gpunum)]);
         g = gpuDevice(gpunum);
     end
 
     % local all
-    image_file_paths = dir2('/data1/synthetic_datasets/image/**/*');
-    depth_file_paths = dir2('/data1/synthetic_datasets/depth/**/*');
-    kernel_file_paths = dir2('/data1/kernel/*');
+    image_file_paths = dir2(['data', filesep, 'synthetic_datasets', filesep, 'image', filesep, '**', filesep, '*']);
+    depth_file_paths = dir2(['data', filesep, 'synthetic_datasets', filesep, 'depth', filesep, '**', filesep, '*']);
+    kernel_file_paths = dir2(['data', filesep, 'kernel', filesep, '*']);
 
-    offset = '/Mango/Users/JunyongLee/datasets/15_gaussian_many/'
-    dof_image_save_path = [offset, 'image/'];
-    blur_map_save_path = [offset, 'blur_map/'];
-    blur_map_norm_save_path = [offset, 'blur_map_norm/'];
-    blur_map_binary_save_path = [offset, 'blur_map_binary/'];
-    depth_map_save_path = [offset, 'depth_decomposed/'];
+    offset = ['result', filesep];
+    dof_image_save_path = [offset, 'image', filesep];
+    blur_map_save_path = [offset, 'blur_map', filesep];
+    blur_map_norm_save_path = [offset, 'blur_map_norm', filesep];
+    blur_map_binary_save_path = [offset, 'blur_map_binary', filesep];
+    depth_map_save_path = [offset, 'depth_decomposed', filesep];
 
     mkdir(dof_image_save_path);
     mkdir(blur_map_save_path);
@@ -22,12 +22,16 @@ function generate_blur_by_depth(is_gpu, gpunum)
     mkdir(blur_map_binary_save_path);
     mkdir(depth_map_save_path);
 
-    num2generate = 100000;
+    num2generate = 1;
     k = 0;
     while k <= num2generate
         rng('shuffle');
         for i = 1:length(image_file_paths)
-            select_idx = randi(length(image_file_paths));
+            if is_random_gen
+                select_idx = randi(length(image_file_paths));
+            else
+                select_idx = i;
+            end
             image_file_path = char(image_file_paths(select_idx));
             depth_file_path = char(depth_file_paths(select_idx));
             fprintf('\n');
@@ -47,16 +51,19 @@ function generate_blur_by_depth(is_gpu, gpunum)
                 reset(g);
             end
             tic;
-            select_idx = randi(length(kernel_file_paths));
+            %select_idx = randi(length(kernel_file_paths));
             %kernel_type = kernel_file_paths(select_idx);
+            % only gaussian!
             kernel_type = 'gaussian';
-            [dof_image, blur_map, blur_map_norm, blur_map_binary, depth_map, camera_params] = blur_by_depth_30_G(image_file_path, depth_file_path, depth_scale, kernel_type, is_gpu);
+            [dof_image, blur_map, blur_map_norm, blur_map_binary, depth_map, camera_params] = blur_by_depth(image_file_path, depth_file_path, depth_scale, kernel_type, max_coc, is_gpu);
             toc;
             disp('[blurring start.. DONE]')
             blur_map_temp = blur_map;
             blur_map_temp = blur_map_temp / 10.0;
 
-            if max(blur_map_temp(:)) > 30
+            max(blur_map_temp(:))
+            min(blur_map_temp(:))
+            if max(blur_map_temp(:)) > (max_coc - 1 / 4.0)
                 disp(num2str(max(blur_map_temp(:)), 2));
                 disp('max coc is bigger than 30');
                 continue;
@@ -70,7 +77,7 @@ function generate_blur_by_depth(is_gpu, gpunum)
             else
                 prefix = 'MIDDLEBURRY_';
             end
-            path_prefix = split(path, '/');
+            path_prefix = split(path, filesep);
             path_prefix = cell2mat(path_prefix(end));
             prefix = [prefix, path_prefix, '_'];
 

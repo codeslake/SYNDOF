@@ -1,4 +1,4 @@
-function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, depth_map, camera_params] = blur_by_depth(image_file_name, depth_map_file_name, depth_scale, kernel_type, is_gpu)
+function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, depth_map, camera_params] = blur_by_depth(image_file_name, depth_map_file_name, depth_scale, kernel_type, max_coc, is_gpu)
     %% get image
     image = get_image(image_file_name);
     depth_map = get_depth_map(depth_map_file_name, depth_scale);
@@ -10,7 +10,7 @@ function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, dep
     max_count = 20;
     count = 0;
     while true
-        [coc_images, camera_params, depth_map, blur_map] = get_coc_image(depth_map_origin, size(image, 2));
+        [coc_images, camera_params, depth_map, blur_map] = get_coc_image(depth_map_origin, size(image, 2), max_coc);
         [coc_images, depth_map] = get_unique_depth_map_and_coc_image(depth_map, coc_images, size(image, 2));
 
         %% decomposing images and masks
@@ -64,7 +64,7 @@ function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, dep
 
         %% get blurr components
         coc = coc_images(i);
-        [mask_blurred, image_blurred, blur_kernel] = get_blurred_components(masks(:, :, i), images_decomposed(i, :, :, :), coc, kernel_type);
+        [mask_blurred, image_blurred, blur_kernel] = get_blurred_components(masks(:, :, i), images_decomposed(i, :, :, :), coc, max_coc, kernel_type);
 
         %%merge
         foreground = image_blurred;
@@ -90,7 +90,7 @@ function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, dep
     blurred_image = merged_image ./ merged_mask;
 
     %% final blur map
-    [blur_map_disc, blur_map_disc_norm, blur_map_binary] = get_blur_map(masks, coc_images);
+    [blur_map_disc, blur_map_disc_norm, blur_map_binary] = get_blur_map(masks, coc_images, max_coc);
     depth_map = depth_map - min(depth_map(:));
     depth_map = depth_map ./ max(depth_map(:));
     depth_map = repelem(depth_map, 1, 1, 3);
@@ -128,7 +128,7 @@ function coc_images = compute_coc(z_point, z_focal, A, m_mmp, m_Cc)
     coc_images = double(coc_images);
 end
 
-function [coc_images, camera_params, depth_map, blur_map] = get_coc_image(depth_map, I_width)
+function [coc_images, camera_params, depth_map, blur_map] = get_coc_image(depth_map, I_width, max_coc)
     %% camera parameters
     epsilon = 0.0001;
 
@@ -164,9 +164,9 @@ function [coc_images, camera_params, depth_map, blur_map] = get_coc_image(depth_
     m_Cc = z_view / z_focal;
 
     if compute_coc(max(z_point(:)), z_focal, A, m_mmp, m_Cc) > compute_coc(min(z_point(:)), z_focal, A, m_mmp, m_Cc)
-        N = (f^2/(z_focal - f)) * (m_mmp / 15) * (abs(max(z_point(:)) - z_focal) / max(z_point(:)));
+        N = (f^2/(z_focal - f)) * (m_mmp / max_coc) * (abs(max(z_point(:)) - z_focal) / max(z_point(:)));
     else
-        N = (f^2/(z_focal - f)) * (m_mmp / 15) * (abs(min(z_point(:)) - z_focal) / min(z_point(:)));
+        N = (f^2/(z_focal - f)) * (m_mmp / max_coc) * (abs(min(z_point(:)) - z_focal) / min(z_point(:)));
     end
     A = f / N;
 
@@ -228,12 +228,12 @@ function masks_sum_prev = get_masks_sum_prev(masks, coc_images)
     masks_sum_prev = flip(masks_sum_prev, 3);
 end
 
-function [mask_blurred, image_blurred, blur_kernel] = get_blurred_components(mask, image_decomposed, coc, kernel_type)
+function [mask_blurred, image_blurred, blur_kernel] = get_blurred_components(mask, image_decomposed, coc, max_coc, kernel_type)
     mask = double(mask);
     image_decomposed = squeeze(image_decomposed);
     %% blur image and mask
     if coc > 1
-        blur_kernel = get_blur_kernel(coc, kernel_type);
+        blur_kernel = get_blur_kernel(coc, max_coc, kernel_type);
 
         concated_mask_image = cat(3, mask, image_decomposed);
         concated_blurred_mask_image = imfilter(concated_mask_image, blur_kernel, 'same', 'conv', 'symmetric');
@@ -250,11 +250,11 @@ function [mask_blurred, image_blurred, blur_kernel] = get_blurred_components(mas
     mask_blurred = repelem(mask_blurred, 1, 1, 3);
 end
 
-function blur_kernel = get_blur_kernel(coc, kernel_type)
+function blur_kernel = get_blur_kernel(coc, max_coc, kernel_type)
     if strcmp(kernel_type, 'gaussian')
         coc = double(coc);
-        g_size = 31;
-        s = (coc - 1) / 2.0;
+        g_size = max_coc;
+        s = (coc - 1) / 4.0;
         G = fspecial('gaussian',[g_size, g_size], s);
         G_idx = find(G > 0);
         [y,x] = ind2sub(size(G),G_idx);
@@ -323,8 +323,10 @@ function inpaint_flag = toggle_inpaint_flag(inpaint_flag, coc)
     end
 end
 
-function [blur_map, blur_map_norm, blur_map_binary] = get_blur_map(masks, coc_images)
+function [blur_map, blur_map_norm, blur_map_binary] = get_blur_map(masks, coc_images, max_coc)
     blur_map = sum(double(masks) .* reshape(coc_images, 1, 1, length(coc_images)), 3);
+    blur_map(blur_map < 1) = 1;
+    blur_map = (blur_map - 1.) ./ 4.0;
     blur_map_norm = blur_map - min(blur_map(:));
     blur_map_norm = blur_map_norm ./ max(blur_map_norm(:));
     blur_map_binary = blur_map; 

@@ -1,17 +1,9 @@
 # data
-sublime
 data/*
-*.png
+utils/*
+backup/*
 
-# trash
-.dropbox
 
-### Python ###
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-*.npy
 
 ### Vim ###
 [._]*.s[a-w][a-z]

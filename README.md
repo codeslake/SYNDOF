@@ -1,7 +1,7 @@
 SYNDOF (Synthetic Defocus Blur Image Generator)
 Matlab implementation of defocus image generation
 
-<img src="./assets/figure.png" width="288">
+<img src="./assets/figure.png" width="700">
 
 ## Prerequisites
 -   matlab

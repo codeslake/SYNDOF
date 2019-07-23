@@ -2,7 +2,6 @@
 ![Matlab](https://img.shields.io/badge/matlab-9.3.0-green.svg?style=plastic)
 
 ![Teaser image](./assets/figure.png)
-<img src="./assets/figure.png" width="700">
 **Picture:** *Outputs generated from our code&ndash; from left to right, synthetic input, defocus map output and defocused image.*
 
 This repository contains the official matlab implementation of SYNDOF generation used in the following paper:

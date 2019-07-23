@@ -1,4 +1,4 @@
-function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, depth_map, camera_params] = blur_by_depth(image_file_name, depth_map_file_name, depth_scale, kernel_type, max_coc, is_gpu)
+function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, depth_map, camera_params] = blur_by_depth(image_file_name, depth_map_file_name, depth_scale, kernel_type, max_coc, is_gpu, g)
     % get image
     image = get_image(image_file_name);
     depth_map = get_depth_map(depth_map_file_name, depth_scale);
@@ -25,6 +25,7 @@ function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, dep
             break;
         end
     end
+
     % decompose images by unique depth (by cocs) and get masks
     [masks, images_decomposed] = get_decomposed_masks_and_images(image, depth_map, unique_depth);
     masks_sum_prev = get_masks_sum_prev(masks, cocs);
@@ -89,6 +90,7 @@ function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, dep
         blur_map_disc_norm = gather(blur_map_disc_norm);
         blur_map_binary = gather(blur_map_binary);
         depth_map = gather(depth_map);
+        reset(g);
     end
 end
 

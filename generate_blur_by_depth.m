@@ -1,4 +1,5 @@
 function generate_blur_by_depth(max_coc, offset_in, offset_out, is_random_gen, is_gpu, gpunum)
+    g = 0;
     if is_gpu
         disp(['gpu: ', num2str(gpunum)]);
         g = gpuDevice(gpunum);
@@ -48,6 +49,7 @@ function generate_blur_by_depth(max_coc, offset_in, offset_out, is_random_gen, i
                 depth_scale = 10;
             end
 
+            disp('=================================================================')
             disp('[blurring start..]')
             tic;
             %select_idx = randi(length(kernel_file_paths));
@@ -55,7 +57,7 @@ function generate_blur_by_depth(max_coc, offset_in, offset_out, is_random_gen, i
             % only gaussian!
             kernel_type = 'gaussian';
             [dof_image, blur_map, blur_map_norm, blur_map_binary, depth_map, camera_params] = ... 
-                blur_by_depth(image_file_path, depth_file_path, depth_scale, kernel_type, max_coc, is_gpu);
+                blur_by_depth(image_file_path, depth_file_path, depth_scale, kernel_type, max_coc, is_gpu, g);
             toc;
             if is_gpu
                 reset(g);
@@ -64,7 +66,7 @@ function generate_blur_by_depth(max_coc, offset_in, offset_out, is_random_gen, i
             blur_map_temp = blur_map;
             blur_map_temp = blur_map_temp / 10.0;
             
-            if max(blur_map_temp(:)) > (max_coc - 1 / 4.0)
+            if max(blur_map_temp(:)) > ((max_coc - 1) / 4.0)
                 disp(num2str(max(blur_map_temp(:)), 2));
                 disp('max coc is bigger than 30');
                 continue;

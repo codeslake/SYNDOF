@@ -14,7 +14,7 @@ This repository contains the official matlab implementation of SYNDOF generation
 
 For any inquiries, please contact [junyonglee@postech.ac.kr](mailto:junyonglee@postech.ac.kr)
 
-## Resourced
+## Resources
 
 All material related to our paper is available via the following links:
 

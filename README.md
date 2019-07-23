@@ -6,7 +6,7 @@
 
 This repository contains the official matlab implementation of SYNDOF generation used in the following paper:
 
-> **Deep Defocus Map Estimation using Domain Adaptation, CVPR2019**
+> **Deep Defocus Map Estimation using Domain Adaptation, CVPR2019**<br>
 > Junyong Lee (POSTECH), Sungkil Lee (Sungkyunkwan University), Sunghyun Cho (POSTECH) Seungyong Lee (POSTECH)
 > 
 > http://cg.postech.ac.kr/papers/2019_CVPR_JY.pdf

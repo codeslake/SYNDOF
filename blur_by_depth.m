@@ -288,7 +288,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [merged_image, merged_mask] = inpaint_background_and_modify_merged_mask(merged_image, merged_mask, mask_sum_prev, blur_kernel)
-    % blur cumlated masks before curret mask with current blur kernel
+    % blur cumulated masks before curret mask with current blur kernel
     mask_sum_prev_blurred = imfilter(double(mask_sum_prev), blur_kernel, 'same', 'conv', 'symmetric');
     mask_sum_prev_blurred(mask_sum_prev_blurred < 0.001) = 0;
 
@@ -346,8 +346,7 @@ function [blur_map, blur_map_norm, blur_map_binary] = get_blur_map(masks, cocs, 
     blur_map_binary(blur_map_binary <= 1) = 0;
     blur_map_binary(blur_map_binary > 1) = 1;
 
-    max_sigma = (max_coc - 1.) / 4.0;
-    blur_map = (blur_map - 1.) ./ 4.0 ./ max_sigma;
+    blur_map = (blur_map - 1.) ./ 4.0; % converting from coc to sigma
     blur_map_norm = blur_map - min(blur_map(:));
     blur_map_norm = blur_map_norm ./ max(blur_map_norm(:));
     

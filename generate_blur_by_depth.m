@@ -1,27 +1,23 @@
-function generate_blur_by_depth(max_coc, is_random_gen, is_gpu, gpunum)
+function generate_blur_by_depth(max_coc, offset_in, offset_out, is_random_gen, is_gpu, gpunum)
     if is_gpu
         disp(['gpu: ', num2str(gpunum)]);
         g = gpuDevice(gpunum);
     end
-
     % local all
     disp("reading files..")
-    offset = 'D:';
-    %offset = 'data1'
+    offset = offset_in;
     image_file_paths = dir2([offset, filesep, 'synthetic_datasets', filesep, 'image', filesep, '**', filesep, '*']);
     depth_file_paths = dir2([offset, filesep, 'synthetic_datasets', filesep, 'depth', filesep, '**', filesep, '*']);
     kernel_file_paths = dir2([offset, filesep, 'kernel', filesep, '*']);
     disp("reading files.. DONE")
 
-    %offset = ['result', filesep];
-    offset = ['\\mango.postech.ac.kr\Users\JunyongLee\hub\datasets\SYNDOF\',num2str(max_coc),'_gaussian\'];
-    dof_image_save_path = [offset, 'image', filesep];
-    blur_map_save_path = [offset, 'blur_map', filesep];
-    blur_map_norm_save_path = [offset, 'blur_map_norm', filesep];
-    blur_map_binary_save_path = [offset, 'blur_map_binary', filesep];
-    depth_map_save_path = [offset, 'depth_decomposed', filesep];
+    offset = offset_out;
+    dof_image_save_path = [offset, filesep, 'image', filesep];
+    blur_map_save_path = [offset, filesep, 'blur_map', filesep];
+    blur_map_norm_save_path = [offset, filesep, 'blur_map_norm', filesep];
+    blur_map_binary_save_path = [offset, filesep, 'blur_map_binary', filesep];
+    depth_map_save_path = [offset, filesep, 'depth_decomposed', filesep];
 
-    offset
     mkdir(dof_image_save_path);
     mkdir(blur_map_save_path);
     mkdir(blur_map_norm_save_path);
@@ -30,7 +26,7 @@ function generate_blur_by_depth(max_coc, is_random_gen, is_gpu, gpunum)
 
     num2generate = 10000;
     k = 0;
-    while k <= num2generate
+    while k < num2generate
         rng('shuffle');
         for i = 1:length(image_file_paths)
             if is_random_gen
@@ -53,9 +49,6 @@ function generate_blur_by_depth(max_coc, is_random_gen, is_gpu, gpunum)
             end
 
             disp('[blurring start..]')
-            if is_gpu
-                reset(g);
-            end
             tic;
             %select_idx = randi(length(kernel_file_paths));
             %kernel_type = kernel_file_paths(select_idx);
@@ -64,10 +57,13 @@ function generate_blur_by_depth(max_coc, is_random_gen, is_gpu, gpunum)
             [dof_image, blur_map, blur_map_norm, blur_map_binary, depth_map, camera_params] = ... 
                 blur_by_depth(image_file_path, depth_file_path, depth_scale, kernel_type, max_coc, is_gpu);
             toc;
+            if is_gpu
+                reset(g);
+            end
             disp('[blurring DONE]')
             blur_map_temp = blur_map;
             blur_map_temp = blur_map_temp / 10.0;
-
+            
             if max(blur_map_temp(:)) > (max_coc - 1 / 4.0)
                 disp(num2str(max(blur_map_temp(:)), 2));
                 disp('max coc is bigger than 30');

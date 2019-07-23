@@ -1,4 +1,4 @@
-## SYNDOF (Synthetic Defocus Blur) &mdash; Official Matlab Implementation
+## SYNDOF (Synthetic Defocus Blur Image Dataset)
 ![Matlab](https://img.shields.io/badge/matlab-9.3.0-green.svg?style=plastic)
 
 ![Teaser image](./assets/figure.png)
@@ -6,8 +6,8 @@
 
 This repository contains the official matlab implementation of SYNDOF generation used in the following paper:
 
-> **Deep Defocus Map Estimation using Domain Adaptation**<br>
-> Junyong Lee (POSTECH), Sungkil Lee (Sungkyunkwan University), Sunghyun Cho (POSTECH) Seungyong Lee (POSTECH)<br
+> **Deep Defocus Map Estimation using Domain Adaptation, CVPR2019**
+> Junyong Lee (POSTECH), Sungkil Lee (Sungkyunkwan University), Sunghyun Cho (POSTECH) Seungyong Lee (POSTECH)
 > 
 > http://cg.postech.ac.kr/papers/2019_CVPR_JY.pdf
 
@@ -55,6 +55,19 @@ check the results under `./out`, which is structured as,
 ├── blur_map_norm/               # directory for normalized defocus map
 ├── depth_decomposed/            # directory for decomposed depth
 └── image/                       # directory for input image (with its modified name)
+
+## BIBTEX
+If you find this code useful, please consider citing:
+
+```
+@InProceedings{Lee_2019_CVPR,
+author = {Lee, Junyong and Lee, Sungkil and Cho, Sunghyun and Lee, Seungyong},
+title = {Deep Defocus Map Estimation Using Domain Adaptation},
+booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+month = {June},
+year = {2019}
+}
+```
 
 ## License ##
 This software is being made available under the terms in the [LICENSE](LICENSE) file.

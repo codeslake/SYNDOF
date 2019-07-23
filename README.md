@@ -1,5 +1,6 @@
 ## SYNDOF (Synthetic Defocus Blur Image Dataset)
 ![Matlab](https://img.shields.io/badge/matlab-9.3.0-green.svg?style=plastic)
+![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-green.svg?style=plastic)
 
 ![Teaser image](./assets/figure.png)
 **Picture:** *Outputs generated from our code&ndash; from left to right, synthetic input, defocus map output and defocused image.*

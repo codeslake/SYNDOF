@@ -35,12 +35,16 @@ generate_blur_by_depth(29, 'data', 'out', false, true, 1)
 ```
 
 check the results under `./out`, which is structured as,
-./out
-├── blur_map/                    # directory for output defocus map
-├── blur_map_binary/             # directory for binarized defocus map
-├── blur_map_norm/               # directory for normalized defocus map
-├── depth_decomposed/            # directory for decomposed depth
-└── image/                       # directory for input image (with its modified name)
+
+    .
+    ├── ...
+    ├── out
+    │  ├── blur_map/                    # directory for output defocus map
+    │  ├── blur_map_binary/             # directory for binarized defocus map
+    │  ├── blur_map_norm/               # directory for normalized defocus map
+    │  ├── depth_decomposed/            # directory for decomposed depth
+    │  ├── image/                       # directory for input image (with its modified name)
+    └── ...
 
 ## Reading Defocus Map
 We rounded real values of defocus map into the nearest 10th. When you read a defocus map, for example in python, read a file as follows,
@@ -48,14 +52,6 @@ We rounded real values of defocus map into the nearest 10th. When you read a def
 image = (np.float32(cv2.imread(file_name, cv2.IMREAD_UNCHANGED))/10.)[:, :, 1]
 image = image / 7. # 7 = (maxCoC - 1) / 4, where maxCoC is 29 in this case.
 ```
-
-check the results under `./out`, which is structured as,
-./out
-├── blur_map/                    # directory for output defocus map
-├── blur_map_binary/             # directory for binarized defocus map
-├── blur_map_norm/               # directory for normalized defocus map
-├── depth_decomposed/            # directory for decomposed depth
-└── image/                       # directory for input image (with its modified name)
 
 ## BIBTEX
 If you find this code useful, please consider citing:

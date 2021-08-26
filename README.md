@@ -8,7 +8,8 @@
 This repository contains the official matlab implementation of SYNDOF generation used in the following paper:
 
 > **[Deep Defocus Map Estimation using Domain Adaptation](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf)**<br>
-> Junyong Lee, Sungkil Lee, Sunghyun Cho and Seungyong Lee, CVPR 2019
+> Junyong Lee, Sungkil Lee, Sunghyun Cho, and Seungyong Lee<br>
+> *IEEE Computer Vision and Pattern Recognition (**CVPR**) 2019*
 
 ## Getting Started
 
@@ -45,19 +46,6 @@ This repository contains the official matlab implementation of SYNDOF generation
     image = image / 7. # 7 = (maxCoC - 1) / 4, where maxCoC is 29 in this case.
     ```
 
-## Citation
-If you find this code useful, please consider citing:
-
-```
-@InProceedings{Lee_2019_CVPR,
-    author = {Lee, Junyong and Lee, Sungkil and Cho, Sunghyun and Lee, Seungyong},
-    title = {Deep Defocus Map Estimation Using Domain Adaptation},
-    booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-    month = {June},
-    year = {2019}
-}
-```
-
 ## Contact
 Open an issue for any inquiries.
 You may also have contact with [junyonglee@postech.ac.kr](mailto:junyonglee@postech.ac.kr)
@@ -77,11 +65,16 @@ This software is being made available under the terms in the [LICENSE](LICENSE) 
 
 Any exemptions to these terms require a license from the Pohang University of Science and Technology.
 
-## About Coupe Project
-Project ‘COUPE’ aims to develop software that evaluates and improves the quality of images and videos based on big visual data. To achieve the goal, we extract sharpness, color, composition features from images and develop technologies for restoring and improving by using them. In addition, personalization technology through user reference analysis is under study.  
-    
-Please checkout other Coupe repositories in our [Posgraph](https://github.com/posgraph) github organization.
+## Citation
+If you find this code useful, please consider citing:
 
-### Useful Links
-* [Coupe Library](http://coupe.postech.ac.kr/)
-* [POSTECH CG Lab.](http://cg.postech.ac.kr/)
+```
+@InProceedings{Lee_2019_CVPR,
+    author = {Lee, Junyong and Lee, Sungkil and Cho, Sunghyun and Lee, Seungyong},
+    title = {Deep Defocus Map Estimation Using Domain Adaptation},
+    booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month = {June},
+    year = {2019}
+}
+```
+

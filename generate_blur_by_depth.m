@@ -7,9 +7,9 @@ function generate_blur_by_depth(max_coc, offset_in, offset_out, is_random_gen, i
     % local all
     disp("reading files..")
     offset = offset_in;
-    image_file_paths = dir2([offset, filesep, 'synthetic_datasets', filesep, 'image', filesep, '**', filesep, '*']);
-    depth_file_paths = dir2([offset, filesep, 'synthetic_datasets', filesep, 'depth', filesep, '**', filesep, '*']);
-    kernel_file_paths = dir2([offset, filesep, 'kernel', filesep, '*']);
+    image_file_paths = dir2([offset, filesep, 'synthetic_datasets', filesep, 'image'], ['**', filesep, '*']);
+    depth_file_paths = dir2([offset, filesep, 'synthetic_datasets', filesep, 'depth'], ['**', filesep, '*']);
+    kernel_file_paths = dir2([offset, filesep, 'kernel', filesep], '*');
     disp("reading files.. DONE")
 
     offset = offset_out;
@@ -107,7 +107,11 @@ function full_path = dir2(varargin)
     if nargin == 0
         name = '.';
     elseif nargin == 1
-        name = varargin{1};
+        error('Too few input arguments.')
+    elseif nargin == 2
+        root = varargin{1};
+        pattern = varargin{2};
+        name = fullfile(root, pattern);
     else
         error('Too many input arguments.')
     end
@@ -134,4 +138,59 @@ function full_path = dir2(varargin)
     end
     full_path = sort(full_path);
 
+end
+
+function full_path = dir3(varargin)
+    if nargin == 0
+        name = '.';
+    elseif nargin == 1
+        error('Too few input arguments.')
+    elseif nargin == 2
+        root = varargin{1};
+        pattern = varargin{2};
+        name = fullfile(root, pattern);
+    else
+        error('Too many input arguments.')
+    end
+
+    allSubFolders = genpath(root);
+    % Let's extract all the folders into individual cells in a cell array.
+    % That will be easier to use when we need to get the folder name in a loop.
+    listOfFolderNames = strsplit(allSubFolders, ';');
+    % Strsplit() seems to give an empty string for the last one.  Get rid of any empty folder names.
+    emptyCells = cellfun(@isempty, listOfFolderNames);
+    listOfFolderNames = listOfFolderNames(~emptyCells);
+    numberOfFolders = length(listOfFolderNames);
+    % fprintf('The total number of folders to look in is %d\n', numberOfFolders);
+
+    full_path = [];
+    totalNumberOfFiles = 0;
+    for k = 1 : numberOfFolders
+        % Get this folder and print it out.
+        thisFolder = listOfFolderNames{k};
+        % fprintf('Looking inside folder %s\n', thisFolder);
+
+        % Get ALL files using the pattern *.*
+        filePattern = sprintf('%s/*.*', thisFolder);
+        baseFileNames = dir(filePattern);
+        
+        numberOfFiles = length(baseFileNames);
+        if numberOfFiles >= 1
+            totalNumberOfFiles = totalNumberOfFiles + numberOfFiles;
+            % Go through all those files.
+            for f = 1 : numberOfFiles
+                fullFileName = fullfile(thisFolder, baseFileNames(f).name);
+                % Skip files . and .. which are actually folders.
+                if isdir(fullFileName)
+                    totalNumberOfFiles = totalNumberOfFiles - 1; % Don't count this file
+                    continue; % Skip to bottom of loop and continue with loop.
+                end
+                full_path = [full_path, string(fullFileName)];
+                % fprintf('     Processing file %s\n', fullFileName);
+            end
+        else
+            % fprintf('     Folder %s has no files in it.\n', thisFolder);
+        end
+    end
+    full_path = sort(full_path);
 end

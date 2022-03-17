@@ -2,9 +2,6 @@
 ![Matlab](https://img.shields.io/badge/matlab-9.3.0-green.svg?style=plastic)
 ![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-green.svg?style=plastic)
 
-![Teaser image](./assets/figure.png)
-**Picture:** *Outputs generated from our code&ndash; from left to right, synthetic input, defocus map output and defocused image.*
-
 This repository contains the official matlab implementation of SYNDOF generation used in the following paper:
 
 > **[Deep Defocus Map Estimation using Domain Adaptation](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf)**<br>
@@ -12,6 +9,8 @@ This repository contains the official matlab implementation of SYNDOF generation
 > *IEEE Computer Vision and Pattern Recognition (**CVPR**) 2019*
 > [Paper](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf) \| [Supp](https://www.dropbox.com/s/van0beau0npq3de/supp.zip?dl=1) \| [DMENet Repo](https://github.com/codeslake/DMENet)
 
+![Teaser image](./assets/figure.png)
+**Picture:** *Outputs generated from our code&ndash; from left to right, synthetic input, defocus map output and defocused image.*
 
 ## Getting Started
 

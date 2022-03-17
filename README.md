@@ -10,11 +10,13 @@ This repository contains the official matlab implementation of SYNDOF generation
 > **[Deep Defocus Map Estimation using Domain Adaptation](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf)**<br>
 > Junyong Lee, Sungkil Lee, Sunghyun Cho, and Seungyong Lee<br>
 > *IEEE Computer Vision and Pattern Recognition (**CVPR**) 2019*
+> [Paper](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf) \| [Supp](https://www.dropbox.com/s/van0beau0npq3de/supp.zip?dl=1) \| [DMENet Repo](https://github.com/codeslake/DMENet)
+
 
 ## Getting Started
 
 ### Prerequisites
-* Download and unzip the [synthetic datasets](https://www.dropbox.com/s/bymkyss5rtn6avl/synthetic_datasets.zip?dl=1) under `./data`:
+* Download and unzip the synthetic datasets ([Google Drive](https://drive.google.com/open?id=1Tc15GlwA-jr5EoXPwSmz2yG6IhxaK_Ji&authuser=codeslake%40gmail.com&usp=drive_fs) \| [Dropbox](https://www.dropbox.com/s/bymkyss5rtn6avl/synthetic_datasets.zip?dl=1)) under `./data`:
     ```
     ├── data
     │   ├── synthetic_datasets
@@ -49,16 +51,6 @@ This repository contains the official matlab implementation of SYNDOF generation
 ## Contact
 Open an issue for any inquiries.
 You may also have contact with [junyonglee@postech.ac.kr](mailto:junyonglee@postech.ac.kr)
-
-## Resources
-All material related to our paper is available via the following links:
-
-| Link |
-| :-------------- |
-| [Paper PDF](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf) |
-| [Supplementary Files](https://www.dropbox.com/s/van0beau0npq3de/supp.zip?dl=1) |
-| [Paper Repository](https://github.com/codeslake/DMENet)|
-| [Synthetic Datasets](https://www.dropbox.com/s/bymkyss5rtn6avl/synthetic_datasets.zip?dl=1)|
 
 ## License
 This software is being made available under the terms in the [LICENSE](LICENSE) file.

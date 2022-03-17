@@ -1,13 +1,10 @@
-## SYNDOF (Synthetic Defocus Blur Image Dataset)
-![Matlab](https://img.shields.io/badge/matlab-9.3.0-green.svg?style=plastic)
-![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-green.svg?style=plastic)
+## SYNDOF (Synthetic Defocus Blur Image Dataset)<br><sub>[Paper](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf) | [Supp](https://www.dropbox.com/s/van0beau0npq3de/supp.zip?dl=1) | [DMENet Repo](https://github.com/codeslake/DMENet)</sub>
 
 This repository contains the official matlab implementation of SYNDOF generation used in the following paper:
-
-> **[Deep Defocus Map Estimation using Domain Adaptation](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf)**<br>
-> Junyong Lee, Sungkil Lee, Sunghyun Cho, and Seungyong Lee<br>
-> *IEEE Computer Vision and Pattern Recognition (**CVPR**) 2019*
-> [Paper](https://openaccess.thecvf.com/content_CVPR_2019/papers/Lee_Deep_Defocus_Map_Estimation_Using_Domain_Adaptation_CVPR_2019_paper.pdf) \| [Supp](https://www.dropbox.com/s/van0beau0npq3de/supp.zip?dl=1) \| [DMENet Repo](https://github.com/codeslake/DMENet)
+> [**Deep Defocus Map Estimation using Domain Adaptation**](https://junyonglee.me/projects/DMENet)<br>
+> [Junyong Lee](https://junyonglee.me)<sup>1</sup>, [Sungkil Lee](http://cg.skku.edu/slee/)<sup>2</sup>, [Sunghyun Cho](https://www.scho.pe.kr/)<sup>3</sup>, and [Seungyong Lee](http://cg.postech.ac.kr/leesy/)<sup>1</sup><br>
+> <sup>1</sup>POSTECH, <sup>2</sup>Sungkyunkwan University, <sup>3</sup>DGIST<br>
+> *IEEE Computer Vision and Pattern Recognition (**CVPR**) 2019*<br>
 
 ![Teaser image](./assets/figure.png)
 **Picture:** *Outputs generated from our code&ndash; from left to right, synthetic input, defocus map output and defocused image.*
@@ -15,6 +12,10 @@ This repository contains the official matlab implementation of SYNDOF generation
 ## Getting Started
 
 ### Prerequisites
+*Tested environment*
+
+![Matlab](https://img.shields.io/badge/matlab-9.3.0-green.svg?style=plastic)
+
 * Download and unzip the synthetic datasets ([Google Drive](https://drive.google.com/open?id=1Tc15GlwA-jr5EoXPwSmz2yG6IhxaK_Ji&authuser=codeslake%40gmail.com&usp=drive_fs) \| [Dropbox](https://www.dropbox.com/s/bymkyss5rtn6avl/synthetic_datasets.zip?dl=1)) under `./data`:
     ```
     ├── data
@@ -52,20 +53,19 @@ Open an issue for any inquiries.
 You may also have contact with [junyonglee@postech.ac.kr](mailto:junyonglee@postech.ac.kr)
 
 ## License
+![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-green.svg?style=plastic)<br>
 This software is being made available under the terms in the [LICENSE](LICENSE) file.
-
 Any exemptions to these terms require a license from the Pohang University of Science and Technology.
 
 ## Citation
 If you find this code useful, please consider citing:
 
 ```
-@InProceedings{Lee_2019_CVPR,
-    author = {Lee, Junyong and Lee, Sungkil and Cho, Sunghyun and Lee, Seungyong},
-    title = {Deep Defocus Map Estimation Using Domain Adaptation},
+@InProceedings{Lee2019DMENet,
+    author    = {Junyong Lee and Sungkil Lee and Sunghyun Cho and Seungyong Lee},
+    title     = {Deep Defocus Map Estimation Using Domain Adaptation},
     booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-    month = {June},
-    year = {2019}
+    year      = {2019}
 }
 ```
 

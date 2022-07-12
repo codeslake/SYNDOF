@@ -1,3 +1,3 @@
 git add .
-git commit -a -m "updated for the final version"
+git commit -a -m "removed unused code"
 git push -u origin master

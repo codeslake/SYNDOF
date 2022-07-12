@@ -1,6 +1,10 @@
 # data
 utils/*
 backup/*
+out/*
+
+# matlab
+*.asv
 
 ### Vim ###
 [._]*.s[a-w][a-z]

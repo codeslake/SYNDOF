@@ -46,7 +46,6 @@ function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, dep
     disp('merging images..');
     merged_image = zeros(size(image));
     merged_mask = zeros(size(image));
-    inpaint_flag = false;
     max_idx = size(masks, 3);
     coc_zero_idx = find(cocs <= 1);
     coc_zero_idx = coc_zero_idx(1);
@@ -60,16 +59,13 @@ function [blurred_image, blur_map_disc, blur_map_disc_norm, blur_map_binary, dep
         foreground = image_blurred;
         merge_mask = mask_blurred;
 
-        % inapint when inpainting flag is true
+        % start inapint when focused plane already merged previously
         if i > coc_zero_idx
-            %mask_sum_prev = logical(sum(masks(:, :, 1:i - 1), 3));
             [merged_image, merged_mask] = inpaint_background_and_modify_merged_mask(merged_image, merged_mask, masks_sum_prev(:, :, max_idx - i + 1), blur_kernel);
         end
         % merge
         merged_image = (1 - merge_mask) .* merged_image + foreground;
         merged_mask = (1 - merge_mask) .* merged_mask + merge_mask;
-        % set inapinting flag
-        inpaint_flag = toggle_inpaint_flag(inpaint_flag, coc);
     end
     disp('merging images..DONE');
     disp('--------------------');
@@ -294,10 +290,10 @@ function [merged_image, merged_mask] = inpaint_background_and_modify_merged_mask
     mask_sum_prev_blurred = imfilter(double(mask_sum_prev), blur_kernel, 'same', 'conv', 'symmetric');
     mask_sum_prev_blurred(mask_sum_prev_blurred < 0.001) = 0;
 
-
     % get mask to inpaint : area that previous masks affects current mask
     inpainting_mask = mask_sum_prev_blurred;
     mask_sum_prev_blurred(mask_sum_prev_blurred == 0) = 0.00001;
+
     inpainting_mask = inpainting_mask ./ mask_sum_prev_blurred;
     inpainting_mask(mask_sum_prev == 1) = 0;
     inpainting_mask = logical(inpainting_mask);
@@ -311,6 +307,7 @@ function [merged_image, merged_mask] = inpaint_background_and_modify_merged_mask
     for j = 1:3
         image_inpainted(:, :, j) = regionfill(gather(image_inpainted(:, :, j)), gather(inpainting_mask));
     end
+
     % inpaint mask
     mask_inpainted = regionfill(gather(double(mask_sum_prev)), gather(inpainting_mask));
     mask_inpainted = repelem(mask_inpainted, 1, 1, 3);
@@ -324,18 +321,6 @@ function [merged_image, merged_mask] = inpaint_background_and_modify_merged_mask
 
     merged_image(inpainting_mask) = image_inpainted(inpainting_mask);
     merged_mask(inpainting_mask) = mask_inpainted(inpainting_mask);
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function inpaint_flag = toggle_inpaint_flag(inpaint_flag, coc)
-    if inpaint_flag == false
-        if coc > 1
-            inpaint_flag = false;
-        else
-            inpaint_flag = true;
-        end
-    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
